@@ -18,7 +18,7 @@ class Category:
             amnt = transaction['amount']
 
             if len(desc) >= 23:
-                outputLine += desc[:24]
+                outputLine += desc[:23]
                 if len(str(amnt)) >= 7:
                     outputLine += amtn[:8]
                 else:
@@ -57,7 +57,7 @@ class Category:
     def get_balance(self):
         sum = 0
         for trans in self.ledger:
-            sum += int(trans['amount'])
+            sum += float(trans['amount'])
         return sum
     
     def transfer(self, amount, category):
@@ -77,12 +77,12 @@ class Category:
     
 
 food = Category("Food")
-food.deposit( 100, 'Initial deposit')
-food.withdraw( 50, 'Buy out')
+food.deposit( 900, 'Initial deposit')
+food.withdraw( 45.67, 'Buy out')
 
 grocery = Category("Grocery")
-grocery.deposit(30, "Initial deposit")
-grocery.transfer(30, food)
+#grocery.deposit(30, "Initial deposit")
+#grocery.transfer(30, food)
 
 print(food)
 print(grocery)
