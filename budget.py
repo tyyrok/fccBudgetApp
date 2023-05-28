@@ -14,7 +14,6 @@ class Category:
             outputLine = '*' * int((30 - len(self.name)) / 2  ) + self.name + '*' * int((30 - len(self.name)) / 2 + 1) + '\n'
         else:
             outputLine = '*' * int((30 - len(self.name)) / 2) + self.name + '*' * int((30 - len(self.name)) / 2) + '\n'
-        print(len(outputLine))
 
         for transaction in self.ledger:
             desc = transaction['description']
@@ -77,38 +76,7 @@ class Category:
     def check_funds(self, amount):
         return True if self.get_balance() >= amount else False
     
-    
-"""
-food = Category("Food")
-food.deposit( 900, 'Initial deposit')
-food.withdraw( 45.67, 'Buy out')
-food.withdraw( 32, 'Test purchase')
-
-grocery = Category("Grocery")
-grocery.deposit( 900, 'Initial deposit')
-grocery.withdraw( 120, 'Buy out')
-
-ent = Category("Ent")
-ent.deposit( 900, 'Initial deposit')
-ent.withdraw( 40, 'Initial ')
-ent.withdraw( 300, 'Initial 2')
-ent.withdraw( 6, 'Initial 3')
-#grocery.deposit(30, "Initial deposit")
-#grocery.transfer(30, food)
-
-#print(food)
-#print(grocery)
-"""
-food = Category("Food")
-entertainment = Category("Entertainment")
-business = Category("Business")
-
-food.deposit(900, "deposit")
-entertainment.deposit(900, "deposit")
-business.deposit(900, "deposit")
-food.withdraw(105.55)
-entertainment.withdraw(33.40)
-business.withdraw(10.99)
+ 
 
 
 
@@ -122,12 +90,8 @@ def create_spend_chart(categories):
                 sum += float(-record['amount'])
         
         percentArray.append(sum)
-    print(percentArray)
     totalExp = reduce( lambda a, b: a + b, percentArray)
-    print(totalExp)
-    print(list((map(lambda a: a / totalExp , percentArray))))
-    weightedArray = list((map(lambda a: round(a / totalExp * 10),  percentArray)))
-    print(weightedArray)
+    weightedArray = list((map(lambda a: floor(a / totalExp * 10),  percentArray)))
 
     resultString = ''
     resultString += 'Percentage spent by category\n'
@@ -141,19 +105,19 @@ def create_spend_chart(categories):
         barValue = str(10 - i)
         if len(barValue) != 1:
             resultString += barValue + '0|'
+        elif int(barValue) == 0:
+            resultString += '  ' + barValue + '|'
         else:
             resultString += ' ' + barValue + '0|'
 
-        if 'o' in resultArray[i] and i != 0:
-                resultString += ' o ' * resultArray[i].count('o')
-
         for j in range(len(weightedArray)):
    
-            if weightedArray[j] == float(barValue):
+            if weightedArray[j] >= float(barValue):
                 resultString +=  ' o '
-            
+            else:
+                resultString += '   '
 
-        resultString +='\n'
+        resultString +=' \n'
         resultArray.append(resultString)
     
     
@@ -164,35 +128,30 @@ def create_spend_chart(categories):
 
         arrayCategoryOut[categories[i].name] = weightedArray[i]
 
-    titleLength = reduce( lambda a, b: max(a, b), arrayCategoryOut.values())
-    print("Lentgh - " + str(titleLength))
+    titleLength = 0
+    for k in categories:
+        if len(k.name) > titleLength:
+            titleLength = len(k.name)
 
-    arrayCategoryOut = sorted(arrayCategoryOut.items(), key=lambda x: x[1], reverse=True)
-    print(arrayCategoryOut)
-    #print(arrayCategoryOut[0][0][0])
+    arrayCategoryOut = list(arrayCategoryOut)
 
-    for i in range(titleLength + 1):
+    for i in range(titleLength ):
         resultString = ' ' * 3
-        print("Hey")
         for j in range(len(arrayCategoryOut)):
             
-            if len(arrayCategoryOut[j][0]) - 1 >= i :
-                print(i)
-                print(arrayCategoryOut[j][0][i])
-
-                resultString += '  ' + arrayCategoryOut[j][0][i]
-                print("He")
+            if len(arrayCategoryOut[j]) - 1 >= i:
+                resultString += '  ' + arrayCategoryOut[j][i]
             else:
                 resultString += '   '
-    
-        print(resultString)
-        resultArray.append(resultString + "\n")
+           
+        resultArray.append(resultString + "  \n")
 
     result = ''
     for i in range(len(resultArray)):
         result += resultArray[i]
+
+    result = result.rstrip('\n')
     return result
 
 
-#print(create_spend_chart([food, ent, grocery]))
-print(create_spend_chart([business, food, entertainment]))
+
